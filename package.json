@@ -8,5 +8,9 @@
   "devDependencies": {
     "webpack": "^2.5.1",
     "webpack-dev-server": "^2.4.5"
+  },
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack -p"
   }
 }
