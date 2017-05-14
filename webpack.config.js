@@ -3,18 +3,18 @@ const webpack = require('webpack');
 
 // PostCSS loader settings
 let postCSSloader = {
-  loader: 'postcss-loader',
-  options: {
-    plugins: (loader) => [
-      require('autoprefixer')({
-        browsers: [
-          '> 2%',
-          'last 3 versions',
-        ]
-      }),
-      require('cssnano')()
-    ]
-  }
+   loader: 'postcss-loader',
+   options: {
+      plugins: (loader) => [
+         require('autoprefixer')({
+            browsers: [
+               '> 2%',
+               'last 3 versions',
+            ]
+         }),
+         require('cssnano')()
+      ]
+   }
 };
 
 module.exports = {
