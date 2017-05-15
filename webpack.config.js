@@ -54,7 +54,13 @@ module.exports = {
       contentBase: path.join(__dirname, 'src'),
       compress: true,
       port: 8080,
+      hot: true,
       stats: 'minimal',
       open: true
    },
+
+   plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NamedModulesPlugin()
+   ]
 };
