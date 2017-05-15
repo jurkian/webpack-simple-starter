@@ -35,22 +35,23 @@ let cssProd = ExtractTextPlugin.extract({
 let cssConfig = isProd ? cssProd : cssDev;
 
 // Sass build config
-let sassDev = ['style-loader', 'css-loader', 'sass-loader', postCSSloader];
+let sassDev = ['style-loader', 'css-loader', postCSSloader, 'sass-loader'];
 let sassProd = ExtractTextPlugin.extract({
    fallback: 'style-loader',
-   use: ['css-loader', 'sass-loader', postCSSloader]
+   use: ['css-loader', postCSSloader, 'sass-loader']
 });
 
 let sassConfig = isProd ? sassProd : sassDev;
 
 module.exports = {
    entry: {
-      main: './src/js/index.js'
+      main: './src/js/index.js',
+      vendor: './src/js/vendor.js'
    },
 
    output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: '[name].bundle.js'
+      filename: 'js/[name].bundle.js'
    },
 
    module: {
@@ -66,10 +67,15 @@ module.exports = {
          use: sassConfig
       }, {
          test: /\.(jpe?g|png|gif|svg)$/i,
+         exclude: [/fonts?/],
          use: [
             'file-loader?name=images/[name].[ext]',
             'image-webpack-loader'
          ]
+      }, {
+         test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+         exclude: [/(images?|img)/],
+         use: 'file-loader?name=fonts/[name].[ext]'
       }]
    },
 
@@ -86,7 +92,7 @@ module.exports = {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
       new ExtractTextPlugin({
-         filename: 'app.css',
+         filename: 'css/[name].css',
          disable: !isProd,
          allChunks: true
       }),
