@@ -2,6 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const glob = require('glob');
+const PurifyCSSPlugin = require('purifycss-webpack');
 
 // Conditional builds for dev and prod
 let isProd = process.env.NODE_ENV === 'production';
@@ -93,11 +95,6 @@ module.exports = {
    plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
-      new ExtractTextPlugin({
-         filename: 'css/[name].css',
-         disable: !isProd,
-         allChunks: true
-      }),
       new HtmlWebpackPlugin({
          title: 'Webpack Starter',
          minify: {
@@ -105,6 +102,15 @@ module.exports = {
          },
          hash: true,
          template: './src/index.ejs', // Load a custom template (ejs by default see the FAQ for details)
+      }),
+      new ExtractTextPlugin({
+         filename: 'css/[name].css',
+         disable: !isProd,
+         allChunks: true
+      }),
+      new PurifyCSSPlugin({
+         // Give paths to parse for rules. These should be absolute!
+         paths: glob.sync(path.join(__dirname, 'src/*.ejs')),
       })
    ]
 };
