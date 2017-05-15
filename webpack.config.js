@@ -1,5 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+// Conditional builds for dev and prod
+let isProd = process.env.NODE_ENV === 'production';
 
 // PostCSS loader settings
 let postCSSloader = {
@@ -16,6 +20,29 @@ let postCSSloader = {
       ]
    }
 };
+
+// Prepare config for CSS and Sass loaders depending on dev/prod environment
+// ExtractTextPlugin doesn't work with HMR, so disable it on development
+
+// CSS build config
+let cssDev = ['style-loader', 'css-loader', postCSSloader];
+let cssProd = ExtractTextPlugin.extract({
+   fallback: 'style-loader',
+   use: ['css-loader', postCSSloader],
+   publicPath: '/dist'
+});
+
+let cssConfig = isProd ? cssProd : cssDev;
+
+// Sass build config
+let sassDev = ['style-loader', 'css-loader', 'sass-loader', postCSSloader];
+let sassProd = ExtractTextPlugin.extract({
+   fallback: 'style-loader',
+   use: ['css-loader', 'sass-loader', postCSSloader],
+   publicPath: '/dist'
+});
+
+let sassConfig = isProd ? sassProd : sassDev;
 
 module.exports = {
    entry: {
@@ -34,19 +61,10 @@ module.exports = {
          use: ['babel-loader']
       }, {
          test: /\.css$/,
-         use: [
-            { loader: 'style-loader' },
-            { loader: 'css-loader' },
-            postCSSloader
-         ]
+         use: cssConfig
       }, {
          test: /\.scss$/,
-         use: [
-            { loader: 'style-loader' },
-            { loader: 'css-loader' },
-            { loader: 'sass-loader' },
-            postCSSloader
-         ]
+         use: sassConfig
       }]
    },
 
@@ -61,6 +79,11 @@ module.exports = {
 
    plugins: [
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NamedModulesPlugin()
+      new webpack.NamedModulesPlugin(),
+      new ExtractTextPlugin({
+         filename: 'app.css',
+         disable: !isProd,
+         allChunks: true
+      })
    ]
 };
