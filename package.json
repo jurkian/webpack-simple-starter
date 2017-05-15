@@ -12,13 +12,15 @@
     "css-loader": "^0.28.1",
     "node-sass": "^4.5.2",
     "postcss-loader": "^2.0.5",
+    "rimraf": "^2.6.1",
     "sass-loader": "^6.0.5",
     "style-loader": "^0.17.0",
     "webpack": "^2.5.1",
     "webpack-dev-server": "^2.4.5"
   },
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack -p"
+    "dev": "webpack-dev-server",
+    "build": "npm run clean && webpack -p",
+    "clean": "rimraf ./dist/*"
   }
 }
