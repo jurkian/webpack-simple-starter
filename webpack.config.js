@@ -65,6 +65,12 @@ module.exports = {
       }, {
          test: /\.scss$/,
          use: sassConfig
+      }, {
+         test: /\.(jpe?g|png|gif|svg)$/i,
+         use: [
+            'file-loader?name=[name].[ext]&publicPath=images/&outputPath=images/',
+            'image-webpack-loader'
+         ]
       }]
    },
 
