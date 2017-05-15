@@ -9,6 +9,7 @@
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.4.0",
+    "cross-env": "^5.0.0",
     "css-loader": "^0.28.1",
     "extract-text-webpack-plugin": "^2.1.0",
     "node-sass": "^4.5.2",
@@ -21,7 +22,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server",
-    "build": "npm run clean && NODE_ENV=production webpack -p",
+    "build": "npm run clean && cross-env NODE_ENV=production webpack -p",
     "clean": "rimraf ./dist/*"
   }
 }
