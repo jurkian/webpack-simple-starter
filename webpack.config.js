@@ -29,8 +29,7 @@ let postCSSloader = {
 let cssDev = ['style-loader', 'css-loader', postCSSloader];
 let cssProd = ExtractTextPlugin.extract({
    fallback: 'style-loader',
-   use: ['css-loader', postCSSloader],
-   publicPath: '/dist'
+   use: ['css-loader', postCSSloader]
 });
 
 let cssConfig = isProd ? cssProd : cssDev;
@@ -39,8 +38,7 @@ let cssConfig = isProd ? cssProd : cssDev;
 let sassDev = ['style-loader', 'css-loader', 'sass-loader', postCSSloader];
 let sassProd = ExtractTextPlugin.extract({
    fallback: 'style-loader',
-   use: ['css-loader', 'sass-loader', postCSSloader],
-   publicPath: '/dist'
+   use: ['css-loader', 'sass-loader', postCSSloader]
 });
 
 let sassConfig = isProd ? sassProd : sassDev;
@@ -69,7 +67,7 @@ module.exports = {
       }, {
          test: /\.(jpe?g|png|gif|svg)$/i,
          use: [
-            'file-loader?name=[name].[ext]&publicPath=images/&outputPath=images/',
+            'file-loader?name=images/[name].[ext]',
             'image-webpack-loader'
          ]
       }]
