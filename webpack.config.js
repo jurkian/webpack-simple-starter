@@ -95,6 +95,9 @@ module.exports = {
    plugins: [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
+      new webpack.optimize.CommonsChunkPlugin({
+         name: 'vendor'
+      }),
       new HtmlWebpackPlugin({
          title: 'Webpack Starter',
          minify: {
