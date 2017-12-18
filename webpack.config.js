@@ -3,13 +3,13 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const glob = require('glob');
-const PurifyCSSPlugin = require('purifycss-webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Conditional builds for dev and prod
-let isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 // PostCSS loader settings
-let postCSSloader = {
+const postCSSloader = {
    loader: 'postcss-loader',
    options: {
       plugins: (loader) => [
@@ -28,29 +28,31 @@ let postCSSloader = {
 // ExtractTextPlugin doesn't work with HMR, so disable it on development
 
 // CSS build config
-let cssDev = ['style-loader', 'css-loader', postCSSloader];
-let cssProd = ExtractTextPlugin.extract({
+const cssDev = ['style-loader', 'css-loader', postCSSloader];
+const cssProd = ExtractTextPlugin.extract({
    fallback: 'style-loader',
    use: ['css-loader', postCSSloader],
    publicPath: '../'
 });
 
-let cssConfig = isProd ? cssProd : cssDev;
+const cssConfig = isProd ? cssProd : cssDev;
 
 // Sass build config
-let sassDev = ['style-loader', 'css-loader', postCSSloader, 'sass-loader'];
-let sassProd = ExtractTextPlugin.extract({
+const sassDev = ['style-loader', 'css-loader', postCSSloader, 'sass-loader'];
+const sassProd = ExtractTextPlugin.extract({
    fallback: 'style-loader',
    use: ['css-loader', postCSSloader, 'sass-loader'],
    publicPath: '../'
 });
 
-let sassConfig = isProd ? sassProd : sassDev;
+const sassConfig = isProd ? sassProd : sassDev;
 
 module.exports = {
    entry: {
-      main: './src/js/index.js',
-      vendor: './src/js/vendor.js'
+      index: './src/index.js',
+      pageA: './src/js/pagea.js',
+      pageB: './src/js/pageb.js',
+      admin: './src/js/admin.js'
    },
 
    output: {
@@ -59,34 +61,40 @@ module.exports = {
    },
 
    module: {
-      rules: [{
-         test: /\.js$/,
-         exclude: /(node_modules|bower_components)/,
-         use: ['babel-loader']
-      }, {
-         test: /\.css$/,
-         use: cssConfig
-      }, {
-         test: /\.scss$/,
-         use: sassConfig
-      }, {
-         test: /\.(jpe?g|png|gif|svg)$/i,
-         exclude: [/fonts?/],
-         use: [
-            'file-loader?name=[name].[ext]&outputPath=images/',
-            'image-webpack-loader'
-         ]
-      }, {
-         test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-         exclude: [/(images?|img)/],
-         use: 'file-loader?name=fonts/[name].[ext]'
-      }]
+      rules: [
+         {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: 'babel-loader'
+         },
+         {
+            test: /\.css$/,
+            use: cssConfig
+         },
+         {
+            test: /\.scss$/,
+            use: sassConfig
+         },
+         {
+            test: /\.(jpe?g|png|gif|svg)$/i,
+            exclude: /fonts?/,
+            use: [
+               'file-loader?name=[name].[ext]&outputPath=images/',
+               'image-webpack-loader'
+            ]
+         },
+         {
+            test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+            exclude: /(images?|img)/,
+            use: 'file-loader?name=fonts/[name].[ext]'
+         }
+      ]
    },
 
    devServer: {
       contentBase: path.join(__dirname, 'src'),
       compress: true,
-      port: 8080,
+      port: 7000,
       hot: true,
       stats: 'minimal',
       open: true
@@ -96,7 +104,8 @@ module.exports = {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
       new webpack.optimize.CommonsChunkPlugin({
-         name: 'vendor'
+         name: 'vendor',
+         minChunks: 2
       }),
       new HtmlWebpackPlugin({
          title: 'Webpack Starter',
@@ -111,9 +120,6 @@ module.exports = {
          disable: !isProd,
          allChunks: true
       }),
-      new PurifyCSSPlugin({
-         // Give paths to parse for rules. These should be absolute!
-         paths: glob.sync(path.join(__dirname, 'src/*.ejs')),
-      })
+      new BundleAnalyzerPlugin()
    ]
 };
